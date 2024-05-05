@@ -1,6 +1,6 @@
-import React, { Fragment } from "react";
+import React  from "react";
 import { Formik, Form, FieldArray, ErrorMessage } from "formik";
-import * as Yup from "yup";
+//import * as Yup from "yup";
 import "../../index.css";
 import {
   Question,
@@ -216,8 +216,8 @@ export default function Home() {
                                 />
                               </Col>
                             </FormGroup>
-                            {formik.values.question_details[`${index}`]
-                              .questionType == 1 && (
+                            {Number(formik.values.question_details[`${index}`]
+                              .questionType) === 1 && (
                                 <div>
                                   <FormGroup row style={{ Gap: "5px" }}>
                                     <Label
