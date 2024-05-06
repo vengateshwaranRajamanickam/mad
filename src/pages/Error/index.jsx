@@ -1,5 +1,5 @@
 import React from "react";
-import error from "../images/505.png";
+import error from "../images/404error.png";
 import { Button } from "reactstrap";
 import { useNavigate } from "react-router-dom";
 
