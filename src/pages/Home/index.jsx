@@ -1,4 +1,4 @@
-import React  from "react";
+import React from "react";
 import { Formik, Form, FieldArray, ErrorMessage } from "formik";
 //import * as Yup from "yup";
 import "../../index.css";
@@ -99,6 +99,7 @@ export default function Home() {
                       name={`Sheet.sheetId`}
                       placeholder="Question Sheet ID"
                       type="text"
+                      style={{ width: "500px" }}
                       onChange={formik.handleChange}
                     />
                     <ErrorMessage
@@ -108,7 +109,7 @@ export default function Home() {
                     />
                   </Col>
                   <Col sm={12} md={12} lg={6} xxl={6}>
-                    <Button color="primary" outline onClick={() => { }}>
+                    <Button color="primary" onClick={() => {}}>
                       Upload to GoogleSheet
                     </Button>
                   </Col>
@@ -136,6 +137,7 @@ export default function Home() {
                                 name={`question_details[${index}].questionId`}
                                 placeholder="Question ID"
                                 type="text"
+                                style={{ width: "300px" }}
                                 onChange={formik.handleChange}
                               />
                               <ErrorMessage
@@ -192,17 +194,16 @@ export default function Home() {
                               <Col sm={12} md={12} lg={6} xxl={6}>
                                 {Object.keys(Options).map(
                                   (option, optionIndex) => (
-                                    <div key={optionIndex} className="gap-2">
+                                    <div key={optionIndex} className="d-flex gap-2">
                                       <Input
                                         id={`question_details[${index}].questionType-${optionIndex}`}
-                                        name={`question_details[${index}].questionType`}
+                                        name={`question_details[${index}].questionType-${optionIndex}`}
                                         value={Options[option]}
                                         type="radio"
                                         onChange={formik.handleChange}
                                       />
                                       <Label
                                         htmlFor={`question_details[${index}].questionType-${optionIndex}`}
-                                        className="mr-2"
                                       >
                                         {option}
                                       </Label>
@@ -216,86 +217,294 @@ export default function Home() {
                                 />
                               </Col>
                             </FormGroup>
-                            {Number(formik.values.question_details[`${index}`]
-                              .questionType) === 1 && (
-                                <div>
-                                  <FormGroup row style={{ Gap: "5px" }}>
-                                    <Label
-                                      for={`question_details[${index}]-questionType-radio`}
-                                      sm={10}
-                                      className="label"
-                                    >
-                                      Choices{" "}
-                                      <span className="red-required"> *</span>
-                                    </Label>
-                                    <br></br>
-                                    {Choice?.length > 0 &&
-                                      Choice.map((data, choiceIndex) => (
-                                        <Col
-                                          sm={12}
-                                          md={12}
-                                          lg={6}
-                                          xxl={6}
-                                          key={choiceIndex}
+                            {Number(
+                              formik.values.question_details[`${index}`]
+                                .questionType
+                            ) === 1 && (
+                              <div>
+                                <FormGroup row style={{ Gap: "5px" }}>
+                                  <Label
+                                    for={`question_details[${index}]-questionType-check`}
+                                    sm={10}
+                                    className="label"
+                                  >
+                                    Choices{" "}
+                                    <span className="red-required"> *</span>
+                                  </Label>
+                                  <br></br>
+                                  {Choice?.length > 0 &&
+                                    Choice.map((data, choiceIndex) => (
+                                      <Col
+                                        sm={12}
+                                        md={12}
+                                        lg={12}
+                                        xxl={12}
+                                        key={choiceIndex}
+                                      >
+                                        <Label
+                                          for={`question_details[${index}]check-${choiceIndex}`}
+                                          sm={10}
+                                          className="label"
                                         >
-                                          <Label
-                                            for={`question_details[${index}]-radio-${choiceIndex}`}
-                                            sm={10}
-                                            className="label"
-                                          >
-                                            {data}{" "}
-                                            <span className="red-required">
-                                              {" "}
-                                              *
-                                            </span>
-                                          </Label>
-                                          <Input
-                                            id={`question_details[${index}]-radio-${choiceIndex}`}
-                                            name={`question_details[${index}]-radio-${choiceIndex}`}
-                                            value={data}
-                                            type="radio"
-                                            onChange={formik.handleChange}
-                                          />
-                                          <br></br>
-                                          <Row>
-                                            <Col sm={12} md={12} lg={6} xxl={6}>
-                                          <Input
-                                            id={`question_details[${index}].question`}
-                                            name={`question_details[${index}].question`}
-                                            placeholder="Question"
-                                            type="textarea"
-                                            style={{
-                                              width: "100%",
-                                              height: "50px",
-                                            }}
-                                            onChange={formik.handleChange}
-                                          />
+                                          {data}{" "}
+                                          <span className="red-required">
+                                            {" "}
+                                            *
+                                          </span>
+                                        </Label>
+                                        <Input
+                                          id={`question_details[${index}]check-${choiceIndex}`}
+                                          name={`question_details[${index}]check-${choiceIndex}`}
+                                          value={data}
+                                          type="radio"
+                                          onChange={formik.handleChange}
+                                        />
+                                        <br></br>
+                                        <Row>
+                                          <Col sm={12} md={12} lg={6} xxl={6}>
+                                            <Input
+                                              id={`question_details[${index}]check-${data}`}
+                                              name={`question_details[${index}]check-${data}`}
+                                              placeholder="Question"
+                                              type="textarea"
+                                              style={{
+                                                width: "100%",
+                                                height: "50px",
+                                              }}
+                                              onChange={formik.handleChange}
+                                            />
 
-                                          <ErrorMessage
-                                            name={`question_details[${index}]-radio-${choiceIndex}`}
-                                            component="div"
-                                            className="error"
-                                          />
+                                            <ErrorMessage
+                                              name={`question_details[${index}]check-${data}`}
+                                              component="div"
+                                              className="error"
+                                            />
                                           </Col>
                                           <Col sm={12} md={12} lg={6} xxl={6}>
-                                          <Input
-                                            id={`question_details[${index}].question`}
-                                            name={`question_details[${index}].question`}
-                                            placeholder="test"
-                                            type="textarea"
-                                            style={{
-                                              width: "100%",
-                                              height: "50px",
-                                            }}
-                                            onChange={formik.handleChange}
-                                          />
+                                            <Input
+                                              id={`question_details[${index}].question`}
+                                              name={`question_details[${index}].question`}
+                                              placeholder="test"
+                                              type="textarea"
+                                              style={{
+                                                width: "100%",
+                                                height: "50px",
+                                              }}
+                                              onChange={formik.handleChange}
+                                            />
                                           </Col>
-                                          </Row>
-                                        </Col>
-                                      ))}
-                                  </FormGroup>
-                                </div>
-                              )}
+                                        </Row>
+                                      </Col>
+                                    ))}
+                                </FormGroup>
+                              </div>
+                            )}
+                            {Number(
+                              formik.values.question_details[`${index}`]
+                                .questionType
+                            ) === 2 && (
+                              <div>
+                                <FormGroup row style={{ Gap: "5px" }}>
+                                  <Label
+                                    for={`question_details[${index}]-questionType-radio`}
+                                    sm={10}
+                                    className="label"
+                                  >
+                                    Choices{" "}
+                                    <span className="red-required"> *</span>
+                                  </Label>
+                                  <br></br>
+                                  {Choice?.length > 0 &&
+                                    Choice.map((data, choiceIndex) => (
+                                      <Col
+                                        sm={12}
+                                        md={12}
+                                        lg={12}
+                                        xxl={12}
+                                        key={choiceIndex}
+                                      >
+                                        <Label
+                                          for={`question_details[${index}]radio-${choiceIndex}`}
+                                          sm={10}
+                                          className="label"
+                                        >
+                                          {data}{" "}
+                                          <span className="red-required">
+                                            {" "}
+                                            *
+                                          </span>
+                                        </Label>
+                                        <Input
+                                          id={`question_details[${index}]radio-${choiceIndex}`}
+                                          name={`question_details[${index}]radio-${choiceIndex}`}
+                                          value={data}
+                                          type="radio"
+                                          onChange={formik.handleChange}
+                                        />
+                                        <br></br>
+                                        <Row>
+                                          <Col sm={12} md={12} lg={6} xxl={6}>
+                                            <Input
+                                              id={`question_details[${index}]radio-${data}`}
+                                              name={`question_details[${index}]radio-${data}`}
+                                              placeholder="Question"
+                                              type="textarea"
+                                              style={{
+                                                width: "100%",
+                                                height: "50px",
+                                              }}
+                                              onChange={formik.handleChange}
+                                            />
+
+                                            <ErrorMessage
+                                              name={`question_details[${index}]radio-${data}`}
+                                              component="div"
+                                              className="error"
+                                            />
+                                          </Col>
+                                          <Col sm={12} md={12} lg={6} xxl={6}>
+                                            <Input
+                                              id={`question_details[${index}].question`}
+                                              name={`question_details[${index}].question`}
+                                              placeholder="test"
+                                              type="textarea"
+                                              style={{
+                                                width: "100%",
+                                                height: "50px",
+                                              }}
+                                              onChange={formik.handleChange}
+                                            />
+                                          </Col>
+                                        </Row>
+                                      </Col>
+                                    ))}
+                                </FormGroup>
+                              </div>
+                            )}
+                            {Number(
+                              formik.values.question_details[`${index}`]
+                                .questionType
+                            ) === 3 && (
+                              <div>
+                                <FormGroup row style={{ Gap: "5px" }}>
+                                  <Label
+                                    for={`question_details[${index}]-questionType-short`}
+                                    sm={10}
+                                    className="label"
+                                  >
+                                    Short Answer{" "}
+                                    <span className="red-required"> *</span>
+                                  </Label>
+                                  <br></br>
+                                  <Col sm={12} md={12} lg={6} xxl={6}>
+                                    <Input
+                                      id={`question_details[${index}]short`}
+                                      name={`question_details[${index}]short`}
+                                      placeholder="Short Answer"
+                                      type="textarea"
+                                      style={{
+                                        width: "100%",
+                                        height: "50px",
+                                      }}
+                                      onChange={formik.handleChange}
+                                    />
+
+                                    <ErrorMessage
+                                      name={`question_details[${index}]short`}
+                                      component="div"
+                                      className="error"
+                                    />
+                                  </Col>
+                                   <Col sm={12} md={12} lg={6} xxl={6}>
+                                            <Input
+                                              id={`question_details[${index}].question`}
+                                              name={`question_details[${index}].question`}
+                                              placeholder="test"
+                                              type="textarea"
+                                              style={{
+                                                width: "100%",
+                                                height: "50px",
+                                              }}
+                                              onChange={formik.handleChange}
+                                            />
+                                          </Col>
+                                </FormGroup>
+                              </div>
+                            )}
+
+                            <FormGroup row style={{ Gap: "5px" }}>
+                              <Label
+                                for={`question_details[${index}].solution`}
+                                sm={10}
+                                className="label"
+                              >
+                                Solution{" "}
+                                <span className="red-required"> *</span>
+                              </Label>
+                              <br></br>
+                              <Col sm={12} md={12} lg={6} xxl={6}>
+                                <Input
+                                  id={`question_details[${index}].solution`}
+                                  name={`question_details[${index}].solution`}
+                                  placeholder="Solution"
+                                  type="textarea"
+                                  style={{ width: "100%", height: "100px" }}
+                                  onChange={formik.handleChange}
+                                />
+                                <ErrorMessage
+                                  name={`question_details[${index}].solution`}
+                                  component="div"
+                                  className="error"
+                                />
+                              </Col>
+                              <Col sm={12} md={12} lg={6} xxl={6}>
+                                <Input
+                                  id="question"
+                                  name="question"
+                                  placeholder="test"
+                                  style={{ width: "100%", height: "100px" }}
+                                  type="textarea"
+                                />
+                              </Col>
+                            </FormGroup>
+                            <div className="d-flex justify-content-center gap-2">
+                              {/* <div className="p-5"> */}
+                              <Button color="primary" onClick={() => {}}>
+                                Save
+                              </Button>
+                              <Button color="primary" onClick={() => {}}>
+                                Reset
+                              </Button>
+                              <Button color="primary" onClick={() => {}}>
+                                Validate
+                              </Button>
+                              {/* </div> */}
+                            </div>
+                            <FormGroup row style={{ Gap: "5px" }}>
+                              <Label
+                                for={`question_details[${index}].remark`}
+                                sm={10}
+                                className="label"
+                              >
+                                Remark{" "}
+                              </Label>
+                              <br></br>
+                              <Col sm={12} md={12} lg={6} xxl={6}>
+                                <Input
+                                  id={`question_details[${index}].remark`}
+                                  name={`question_details[${index}].remark`}
+                                  placeholder="Remark"
+                                  type="textarea"
+                                  style={{ width: "100%", height: "100px" }}
+                                  onChange={formik.handleChange}
+                                />
+                                <ErrorMessage
+                                  name={`question_details[${index}].remark`}
+                                  component="div"
+                                  className="error"
+                                />
+                              </Col>
+                            </FormGroup>
                           </div>
                         );
                       })}

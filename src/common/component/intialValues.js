@@ -2,13 +2,21 @@ export const Question = {
     questionId: null,
     question: "",
     questionType: null,
-    optinA: "",
-    optionB: "",
-    optionC: "",
-    optionD: "",
+    radio:{
+      optinA: "",
+      optionB: "",
+      optionC: "",
+      optionD: "",
+    },
+    check:{
+      optinA: "",
+      optionB: "",
+      optionC: "",
+      optionD: "",
+    },
+    short: "",
     answer: null,
     solution: "",
-    short: "",
     remark:"",
   };
 
@@ -24,3 +32,4 @@ export const Options = {
 }
 
 export const Choice = ['Option A', 'Option B', 'Option C', 'Option D'];
+
