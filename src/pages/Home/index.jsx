@@ -1,92 +1,103 @@
 import React from "react";
-import { Formik, Form, FieldArray, ErrorMessage } from "formik";
-//import { object, string, array, yup } from 'yup';
-import * as Yup from 'yup';
+import {
+  Formik,
+  Form,
+  FieldArray,
+  ErrorMessage,
+} from "formik";
+import * as Yup from "yup";
 import "../../index.css";
 import {
   Question,
   Options,
   Choice,
-  QuestionData
+  QuestionData,
 } from "../../common/component/intialValues";
+import { toast } from 'react-toastify';
+
 import { Col, FormGroup, Input, Label, Row } from "reactstrap";
 import { Button } from "reactstrap";
+import { showToast } from "../../common/component/services/toaster";
 export default function Home() {
+  const formikRef = React.useRef();
   const handleSubmit = (values) => {
-    console.log(values);
-    if(values?.question_details){
-
+    console.log(formikRef.current.dirty,values);
+    if (formikRef.current.dirty) {
+      showToast("success", "Saved"); 
+     // patchModalData(baseurl, educationEndpoints, values, setLoading, setOpen, "")
     }
-    // patchModalData(baseurl, educationEndpoints, values, setLoading, setOpen, "")
+    else{
+      showToast("error", "Form Not Modified");   
+     }
   };
 
-
-
-  const radioSchema = Yup.object().shape({
-    Option_A: Yup.string(),
-    Option_B: Yup.string(),
-    Option_C: Yup.string(),
-    Option_D: Yup.string(),
-  });
-  
-  const checkSchema = Yup.object().shape({
-    Option_A: Yup.string(),
-    Option_B: Yup.string(),
-    Option_C: Yup.string(),
-    Option_D: Yup.string(),
-  });
-
-const ValidationSchema = Yup.object().shape({
-  question_details: Yup.array().of(
-    Yup.object().shape({
-      questionId: Yup.string().required("Question ID is Required"),
-      question: Yup.string().required("Question is Required"),
-      questionType: Yup.string().required("questionType is Required"),
-      radio: Yup.object().when(['questionType'], {
-        is: "2",
-        then: ()=> Yup.object().shape({
-          "Option A": Yup.string().required("Option A is required"),
-          "Option B": Yup.string().required("Option B is required"),
-          "Option C": Yup.string().required("Option C is required"),
-          "Option D": Yup.string().required("Option D is required"),
+  const ValidationSchema = Yup.object().shape({
+    question_details: Yup.array().of(
+      Yup.object().shape({
+        questionId: Yup.string().required("Question ID is Required"),
+        question: Yup.string().required("Question is Required"),
+        questionType: Yup.string().required("QuestionType is Required"),
+        radio: Yup.object().when(["questionType"], {
+          is: "2",
+          then: () =>
+            Yup.object().shape({
+              "Option A": Yup.string().required("Option A is required"),
+              "Option B": Yup.string().required("Option B is required"),
+              "Option C": Yup.string().required("Option C is required"),
+              "Option D": Yup.string().required("Option D is required"),
+            }),
+          otherwise: () => Yup.object().notRequired(),
         }),
-        otherwise: ()=> Yup.object().notRequired(),
-      }),
-      check: Yup.object().when('questionType', {
-        is: "1",
-        then: ()=> Yup.object().shape({
-          "Option A": Yup.string().required("Option A is required"),
-          "Option B": Yup.string().required("Option B is required"),
-          "Option C": Yup.string().required("Option C is required"),
-          "Option D": Yup.string().required("Option D is required"),
+        radio_answer: Yup.string().when(["questionType"], {
+          is: "2",
+          then: () => Yup.string().required("Select Option"),
+          otherwise: ()=> Yup.string().notRequired()
         }),
-        otherwise: ()=> Yup.object().notRequired(),
-      }),
-      short: Yup.string().when(['questionType'], {
-        is: "3",
-        then: ()=> Yup.string().required("Short Answer is required"),
-        otherwise: ()=> Yup.string().notRequired(),
-      }),
-      solution: Yup.string().required("Solution is required"),
-      remark: Yup.string(),
-    })
-  ),
-});
-
-
+        check: Yup.object().when("questionType", {
+          is: "1",
+          then: () =>
+            Yup.object().shape({
+              "Option A": Yup.string().required("Option A is required"),
+              "Option B": Yup.string().required("Option B is required"),
+              "Option C": Yup.string().required("Option C is required"),
+              "Option D": Yup.string().required("Option D is required"),
+            }),
+          otherwise: () => Yup.object().notRequired(),
+        }),
+        check_answer: Yup.object().when("questionType", {
+          is: "1", 
+          then: ()=> Yup.object().test(
+            "Select Options",
+            "Please select at least one option", // Custom error message
+            value => Object.values(value).some(option => option === true)
+          ),
+          otherwise: () => Yup.object().notRequired(),
+        }),
+        short: Yup.string().when(["questionType"], {
+          is: "3",
+          then: () => Yup.string().nonNullable().required("Short Answer is required"),
+          otherwise: () => Yup.string().notRequired(),
+        }),
+        solution: Yup.string().required("Solution is required"),
+        remark: Yup.string().notRequired(),
+      })
+    ),
+    SheetID:  Yup.string().required("QuestionSheet ID is Required"),
+  });
 
   return (
     <Formik
       enableReinitialize
-     validationSchema={ValidationSchema}
+      validationSchema={ValidationSchema}
       validateOnChange={true}
       validateOnBlur={true}
       initialValues={QuestionData}
+      innerRef={formikRef}
       onSubmit={(values) => handleSubmit(values)}
     >
       {(formik) => {
-      console.log("formik Values", formik.values);
-       console.log("formik errors",formik.errors);
+        console.log("formik Values", formik.values);
+        console.log("formik errors", formik.errors);
         return (
           <Form>
             <div className=" m-3">
@@ -94,8 +105,8 @@ const ValidationSchema = Yup.object().shape({
                 <FormGroup row style={{ rowGap: "5px" }}>
                   <Label for="Question Sheet ID" sm={10} className="label">
                     Question Sheet ID <span className="red-required"> *</span>
-                  </Label>              
-                   <Col sm={12} md={12} lg={6} xxl={6} className="mt-2">
+                  </Label>
+                  <Col sm={12} md={12} lg={6} xxl={6} className="mt-2">
                     <Input
                       id={`SheetID`}
                       name={`SheetID`}
@@ -111,7 +122,7 @@ const ValidationSchema = Yup.object().shape({
                     />
                   </Col>
                   <Col sm={12} md={12} lg={6} xxl={6}>
-                    <Button color="primary" onClick={() => { }}>
+                    <Button color="primary" onClick={() => {}}>
                       Upload to GoogleSheet
                     </Button>
                   </Col>
@@ -123,6 +134,12 @@ const ValidationSchema = Yup.object().shape({
                   <div>
                     {formik.values.question_details?.length > 0 &&
                       formik.values.question_details?.map((data, index) => {
+                        function reset(index) {
+                          formik.setFieldValue(
+                            `question_details[${index}]`,
+                            Question
+                          );
+                        }
                         return (
                           <div key={index}>
                             <FormGroup>
@@ -131,12 +148,16 @@ const ValidationSchema = Yup.object().shape({
                                 sm={10}
                                 className="label"
                               >
-                                {`Question ID ${index+1}`}<span className="red-required"> *</span>
+                                {`Question ID ${index + 1}`}
+                                <span className="red-required"> *</span>
                               </Label>
                               <Input
                                 id={`question_details[${index}].questionId`}
                                 name={`question_details[${index}].questionId`}
-                                value={formik.values.question_details[`${index}`].questionId}
+                                value={
+                                  formik.values.question_details[`${index}`]
+                                    .questionId
+                                }
                                 placeholder="Question ID"
                                 type="text"
                                 style={{ width: "300px" }}
@@ -158,12 +179,21 @@ const ValidationSchema = Yup.object().shape({
                                 Question{" "}
                                 <span className="red-required"> *</span>
                               </Label>
-                              
-                              <Col sm={12} md={12} lg={6} xxl={6} className="mt-2">
+
+                              <Col
+                                sm={12}
+                                md={12}
+                                lg={6}
+                                xxl={6}
+                                className="mt-2"
+                              >
                                 <Input
                                   id={`question_details[${index}].question`}
                                   name={`question_details[${index}].question`}
-                                  value={formik.values.question_details[`${index}`].question}
+                                  value={
+                                    formik.values.question_details[`${index}`]
+                                      .question
+                                  }
                                   placeholder="Question"
                                   type="textarea"
                                   style={{ width: "100%", height: "100px" }}
@@ -175,7 +205,13 @@ const ValidationSchema = Yup.object().shape({
                                   className="error"
                                 />
                               </Col>
-                              <Col sm={12} md={12} lg={6} xxl={6} className="mt-2">
+                              <Col
+                                sm={12}
+                                md={12}
+                                lg={6}
+                                xxl={6}
+                                className="mt-2"
+                              >
                                 <Input
                                   id="question"
                                   name="question"
@@ -194,15 +230,30 @@ const ValidationSchema = Yup.object().shape({
                                 Question Type{" "}
                                 <span className="red-required"> *</span>
                               </Label>
-                              
-                              <Col sm={12} md={12} lg={6} xxl={6} className="d-flex">
+
+                              <Col
+                                sm={12}
+                                md={12}
+                                lg={6}
+                                xxl={6}
+                                className="d-flex"
+                              >
                                 {Object.keys(Options).map(
                                   (option, optionIndex) => (
-                                      <FormGroup radio  key={optionIndex} className="d-flex gap-2" style={{marginRight:'15px'}}>
+                                    <FormGroup
+                                      radio
+                                      key={optionIndex}
+                                      className="d-flex gap-2"
+                                      style={{ marginRight: "15px" }}
+                                    >
                                       <Input
                                         id={`question_details[${index}].questionType-${optionIndex}`}
                                         name={`question_details[${index}].questionType`}
-                                        defaultValue={formik.values.question_details[`${index}`].questionType}
+                                        defaultValue={
+                                          formik.values.question_details[
+                                            `${index}`
+                                          ].questionType
+                                        }
                                         label={option}
                                         value={Options[option]}
                                         type="radio"
@@ -213,7 +264,7 @@ const ValidationSchema = Yup.object().shape({
                                       >
                                         {option}
                                       </Label>
-                                      </FormGroup>
+                                    </FormGroup>
                                   )
                                 )}
                                 <ErrorMessage
@@ -223,32 +274,30 @@ const ValidationSchema = Yup.object().shape({
                                 />
                               </Col>
                             </FormGroup>
-                            {
-                              formik.values.question_details[`${index}`]
-                                .questionType
-                             == 1 && (
-                                <div>
-                                  <FormGroup row style={{ Gap: "5px" }}>
-                                    <Label
-                                      for={`question_details[${index}]-questionType-check`}
-                                      sm={10}
-                                      className="label"
-                                    >
-                                      Choices{" "}
-                                      <span className="red-required"> *</span>
-                                    </Label>
-                                    
-                                    {Choice?.length > 0 &&
-                                      Choice.map((data, choiceIndex) => (
-                                        <Col
-                                          sm={12}
-                                          md={12}
-                                          lg={12}
-                                          xxl={12}
-                                          key={choiceIndex}
-                                          className="mt-3"
-                                        >
-                                          <div className="d-flex gap-2 mt-2">                                        
+                            {formik.values.question_details[`${index}`]
+                              .questionType == 1 && (
+                              <div>
+                                <FormGroup row style={{ Gap: "5px" }}>
+                                  <Label
+                                    for={`question_details[${index}]-questionType-check`}
+                                    sm={10}
+                                    className="label"
+                                  >
+                                    Choices{" "}
+                                    <span className="red-required"> *</span>
+                                  </Label>
+
+                                  {Choice?.length > 0 &&
+                                    Choice.map((data, choiceIndex) => (
+                                      <Col
+                                        sm={12}
+                                        md={12}
+                                        lg={12}
+                                        xxl={12}
+                                        key={choiceIndex}
+                                        className="mt-3"
+                                      >
+                                        <div className="d-flex gap-2 mt-2">
                                           <Label
                                             for={`question_details[${index}].check-${choiceIndex}`}
                                             className="label"
@@ -263,77 +312,92 @@ const ValidationSchema = Yup.object().shape({
                                             id={`question_details[${index}].check_answer.${data}`}
                                             name={`question_details[${index}].check_answer.${data}`}
                                             //defaultValue={formik.values.question_details[`${index}`].questionType}
-                                            checked={formik.values.question_details[`${index}`].check_answer[`${data}`]} 
+                                            checked={
+                                              formik.values.question_details[
+                                                `${index}`
+                                              ].check_answer[`${data}`]
+                                            }
                                             value={data}
                                             type="checkbox"
                                             onChange={formik.handleChange}
                                           />
-                                          </div>
-                                          <Row style={{gap:'5px'}} className="mt-2">
-                                            <Col sm={12} md={12} lg={6} xxl={6}>
-                                              <Input
-                                                id={`question_details[${index}].check.${data}`}
-                                                name={`question_details[${index}].check.${data}`}
-                                                value={formik.values.question_details[`${index}`].check[`${data}`]}
-                                                placeholder={data}
-                                                type="textarea"
-                                                style={{
-                                                  width: "100%",
-                                                  height: "50px",
-                                                }}
-                                                onChange={formik.handleChange}
-                                              />
+                                          <ErrorMessage
+                                              name={`question_details[${index}].check_answer`}
+                                              component="div"
+                                              className="error"
+                                            />
+                                        </div>
+                                        <div
+                                          className="mt-2 d-flex gap-2"
+                                        >
+                                          <Col sm={12} md={12} lg={6} xxl={6}>
+                                            <Input
+                                              id={`question_details[${index}].check.${data}`}
+                                              name={`question_details[${index}].check.${data}`}
+                                              value={
+                                                formik.values.question_details[
+                                                  `${index}`
+                                                ].check[`${data}`]
+                                              }
+                                              placeholder={data}
+                                              type="textarea"
+                                              style={{
+                                                width: "100%",
+                                                height: "50px",
+                                              }}
+                                              onChange={formik.handleChange}
+                                            />
 
-                                              <ErrorMessage
-                                                name={`question_details[${index}].check.${data}`}
-                                                component="div"
-                                                className="error"
-                                              />
-                                            </Col>
-                                            <Col sm={12} md={12} lg={6} xxl={6}>
-                                              <Input
-                                                id={`question_details[${index}].question`}
-                                                name={`question_details[${index}].question`}
-                                                placeholder="test"
-                                                type="textarea"
-                                                style={{
-                                                  width: "100%",
-                                                  height: "50px",
-                                                }}
-                                                onChange={formik.handleChange}
-                                              />
-                                            </Col>
-                                          </Row>
-                                        </Col>
-                                      ))}
-                                  </FormGroup>
-                                </div>
-                              )}
+                                            <ErrorMessage
+                                              name={`question_details[${index}].check.${data}`}
+                                              component="div"
+                                              className="error"
+                                            />
+                                          </Col>
+                                          <Col sm={12} md={12} lg={6} xxl={6}>
+                                            <Input
+                                              id={`question_details[${index}].question`}
+                                              name={`question_details[${index}].question`}
+                                              placeholder="test"
+                                              type="textarea"
+                                              style={{
+                                                width: "100%",
+                                                height: "50px",
+                                              }}
+                                              onChange={formik.handleChange}
+                                            />
+                                          </Col>
+                                        </div>
+                                      </Col>
+                                    ))}
+                                </FormGroup>
+                              </div>
+                            )}
                             {Number(
                               formik.values.question_details[`${index}`]
                                 .questionType
                             ) === 2 && (
-                                <div>
-                                  <FormGroup row style={{ Gap: "5px" }}>
-                                    <Label
-                                      for={`question_details[${index}]-questionType-radio`}
-                                      sm={10}
-                                      className="label"
-                                    >
-                                      Choices{" "}
-                                      <span className="red-required"> *</span>
-                                    </Label>
-                                    {Choice?.length > 0 &&
-                                      Choice.map((data, choiceIndex) => (
-                                        <Col
-                                          sm={12}
-                                          md={12}
-                                          lg={12}
-                                          xxl={12}
-                                          key={choiceIndex}
-                                          className="mt-3"
-                                        >
-                                          <div className="d-flex gap-2 mt-2">  
+                              <div>
+                                <FormGroup row style={{ Gap: "5px" }}>
+                                  <Label
+                                    for={`question_details[${index}]-questionType-radio`}
+                                    sm={10}
+                                    className="label"
+                                  >
+                                    Choices{" "}
+                                    <span className="red-required"> *</span>
+                                  </Label>
+                                  {Choice?.length > 0 &&
+                                    Choice.map((data, choiceIndex) => (
+                                      <Col
+                                        sm={12}
+                                        md={12}
+                                        lg={12}
+                                        xxl={12}
+                                        key={choiceIndex}
+                                        className="mt-3"
+                                      >
+                                        <div className="d-flex gap-2 mt-2">
                                           <Label
                                             for={`question_details[${index}].radio-${choiceIndex}`}
                                             className="label"
@@ -347,102 +411,131 @@ const ValidationSchema = Yup.object().shape({
                                           <Input
                                             id={`question_details[${index}].radio_answer-${choiceIndex}`}
                                             name={`question_details[${index}].radio_answer`}
-                                            defaultValue={formik.values.question_details[`${index}`].radio_answer}
+                                            defaultValue={
+                                              formik.values.question_details[
+                                                `${index}`
+                                              ].radio_answer
+                                            }
                                             value={data}
                                             type="radio"
                                             onChange={formik.handleChange}
                                           />
-                                          </div>
-                                          <Row style={{gap:'5px'}} className="mt-2">
-                                            <Col sm={12} md={12} lg={6} xxl={6}>
-                                              <Input
-                                                id={`question_details[${index}].radio.${data}`}
-                                                name={`question_details[${index}].radio.${data}`}
-                                                value={formik.values.question_details[`${index}`].radio[`${data}`]}
-                                                placeholder={`${data}`}
-                                                type="textarea"
-                                                style={{
-                                                  width: "100%",
-                                                  height: "50px",
-                                                }}
-                                                onChange={formik.handleChange}
-                                              />
+                                           <ErrorMessage
+                                              name={`question_details[${index}].radio_answer`}
+                                              component="div"
+                                              className="error"
+                                            />
+                                        </div>
+                                        <div className="d-flex gap-2 mt-2">
+                                          <Col sm={12} md={12} lg={6} xxl={6}>
+                                            <Input
+                                              id={`question_details[${index}].radio.${data}`}
+                                              name={`question_details[${index}].radio.${data}`}
+                                              value={
+                                                formik.values.question_details[
+                                                  `${index}`
+                                                ].radio[`${data}`]
+                                              }
+                                              placeholder={`${data}`}
+                                              type="textarea"
+                                              style={{
+                                                width: "100%",
+                                                height: "50px",
+                                              }}
+                                              onChange={formik.handleChange}
+                                            />
 
-                                              <ErrorMessage
-                                                name={`question_details[${index}].radio.${data}`}
-                                                component="div"
-                                                className="error"
-                                              />
-                                            </Col>
-                                            <Col sm={12} md={12} lg={6} xxl={6}>
-                                              <Input
-                                                id={`question_details[${index}].question`}
-                                                name={`question_details[${index}].question`}
-                                                placeholder="test"
-                                                type="textarea"
-                                                style={{
-                                                  width: "100%",
-                                                  height: "50px",
-                                                }}
-                                                onChange={formik.handleChange}
-                                              />
-                                            </Col>
-                                          </Row>
-                                        </Col>
-                                      ))}
-                                  </FormGroup>
-                                </div>
-                              )}
+                                            <ErrorMessage
+                                              name={`question_details[${index}].radio.${data}`}
+                                              component="div"
+                                              className="error"
+                                            />
+                                          </Col>
+                                          <Col sm={12} md={12} lg={6} xxl={6}>
+                                            <Input
+                                              id={`question_details[${index}].question`}
+                                              name={`question_details[${index}].question`}
+                                              placeholder="test"
+                                              type="textarea"
+                                              style={{
+                                                width: "100%",
+                                                height: "50px",
+                                              }}
+                                              onChange={formik.handleChange}
+                                            />
+                                          </Col>
+                                        </div>
+                                      </Col>
+                                    ))}
+                                </FormGroup>
+                              </div>
+                            )}
                             {Number(
                               formik.values.question_details[`${index}`]
                                 .questionType
                             ) === 3 && (
-                                <div>
-                                  <FormGroup row style={{ Gap: "5px" }}>
-                                    <Label
-                                      for={`question_details[${index}]-questionType-short`}
-                                      sm={10}
-                                      className="label"
-                                    >
-                                      Short Answer{" "}
-                                      <span className="red-required"> *</span>
-                                    </Label>
-                                    <Col sm={12} md={12} lg={6} xxl={6} className="mt-2">
-                                      <Input
-                                        id={`question_details[${index}].short`}
-                                        name={`question_details[${index}].short`}
-                                        value={formik.values.question_details[`${index}`].short}
-                                        placeholder="Short Answer"
-                                        type="textarea"
-                                        style={{
-                                          width: "100%",
-                                          height: "50px",
-                                        }}
-                                        onChange={formik.handleChange}
-                                      />
+                              <div>
+                                <FormGroup row style={{ Gap: "5px" }}>
+                                  <Label
+                                    for={`question_details[${index}]-questionType-short`}
+                                    sm={10}
+                                    className="label"
+                                  >
+                                    Short Answer{" "}
+                                    <span className="red-required"> *</span>
+                                  </Label>
+                                  <Col
+                                    sm={12}
+                                    md={12}
+                                    lg={6}
+                                    xxl={6}
+                                    className="mt-2"
+                                  >
+                                    <Input
+                                      id={`question_details[${index}].short`}
+                                      name={`question_details[${index}].short`}
+                                      value={
+                                        formik.values.question_details[
+                                          `${index}`
+                                        ].short
+                                      }
+                                      placeholder="Short Answer"
+                                      type="textarea"
+                                      style={{
+                                        width: "100%",
+                                        height: "50px",
+                                      }}
+                                      onChange={formik.handleChange}
+                                    />
 
-                                      <ErrorMessage
-                                        name={`question_details[${index}].short`}
-                                        component="div"
-                                        className="error"
-                                      />
-                                    </Col>
-                                    <Col sm={12} md={12} lg={6} xxl={6} className="mt-2">
-                                      <Input
-                                        id={`question_details[${index}].question`}
-                                        name={`question_details[${index}].question`}
-                                        placeholder="test"
-                                        type="textarea"
-                                        style={{
-                                          width: "100%",
-                                          height: "50px",
-                                        }}
-                                        onChange={formik.handleChange}
-                                      />
-                                    </Col>
-                                  </FormGroup>
-                                </div>
-                              )}
+                                    <ErrorMessage
+                                      name={`question_details[${index}].short`}
+                                      component="div"
+                                      className="error"
+                                    />
+                                  </Col>
+                                  <Col
+                                    sm={12}
+                                    md={12}
+                                    lg={6}
+                                    xxl={6}
+                                    className="mt-2"
+                                  >
+                                    <Input
+                                      id={`question_details[${index}].question`}
+                                      name={`question_details[${index}].question`}
+                                      placeholder="test"
+                                      type="textarea"
+                                      style={{
+                                        width: "100%",
+                                        height: "50px",
+                                      }}
+                                      onChange={formik.handleChange}
+                                    />
+                                  </Col>
+                                </FormGroup>
+                              </div>
+                            )}
 
                             <FormGroup row style={{ Gap: "5px" }}>
                               <Label
@@ -453,11 +546,20 @@ const ValidationSchema = Yup.object().shape({
                                 Solution{" "}
                                 <span className="red-required"> *</span>
                               </Label>
-                              <Col sm={12} md={12} lg={6} xxl={6} className="mt-2">
+                              <Col
+                                sm={12}
+                                md={12}
+                                lg={6}
+                                xxl={6}
+                                className="mt-2"
+                              >
                                 <Input
                                   id={`question_details[${index}].solution`}
                                   name={`question_details[${index}].solution`}
-                                  value={formik.values.question_details[`${index}`].solution}
+                                  value={
+                                    formik.values.question_details[`${index}`]
+                                      .solution
+                                  }
                                   placeholder="Solution"
                                   type="textarea"
                                   style={{ width: "100%", height: "100px" }}
@@ -469,7 +571,13 @@ const ValidationSchema = Yup.object().shape({
                                   className="error"
                                 />
                               </Col>
-                              <Col sm={12} md={12} lg={6} xxl={6} className="mt-2">
+                              <Col
+                                sm={12}
+                                md={12}
+                                lg={6}
+                                xxl={6}
+                                className="mt-2"
+                              >
                                 <Input
                                   id="question"
                                   name="question"
@@ -480,19 +588,23 @@ const ValidationSchema = Yup.object().shape({
                               </Col>
                             </FormGroup>
                             <div className="d-flex justify-content-center gap-2">
-
-                              <Button color="primary" onClick={() => formik.handleSubmit()}>
+                              <Button
+                                color="primary"
+                                onClick={(index) => formik.handleSubmit(index)}
+                              >
                                 Save
                               </Button>
-                              <Button color="primary" onClick={() => { }}>
+                              <Button
+                                color="primary"
+                                onClick={() => reset(index)}
+                              >
                                 Reset
                               </Button>
-                              <Button color="primary" onClick={() => { }}>
+                              <Button color="primary" onClick={() => {}}>
                                 Validate
                               </Button>
-
                             </div>
-                            <FormGroup row style={{ Gap: "5px" }}>
+                            <FormGroup row className="FormGroup">
                               <Label
                                 for={`question_details[${index}].remark`}
                                 sm={10}
@@ -504,7 +616,10 @@ const ValidationSchema = Yup.object().shape({
                                 <Input
                                   id={`question_details[${index}].remark`}
                                   name={`question_details[${index}].remark`}
-                                  value={formik.values.question_details[`${index}`].remark}
+                                  value={
+                                    formik.values.question_details[`${index}`]
+                                      .remark
+                                  }
                                   placeholder="Remark"
                                   type="textarea"
                                   style={{ width: "100%", height: "100px" }}
@@ -518,16 +633,27 @@ const ValidationSchema = Yup.object().shape({
                               </Col>
                             </FormGroup>
                             <div className="d-flex justify-content-end gap-3">
-                            <Button color="success"  onClick={()=>push(Question)}>Add Question</Button>
-                {index >= 1 && <Button color="danger"  onClick={()=>remove(index)}>Remove Question</Button>}
-                </div>
-                <hr/>
+                              <Button
+                                color="success"
+                                onClick={() => push(Question)}
+                              >
+                                Add Question
+                              </Button>
+                              {index >= 1 && (
+                                <Button
+                                  color="danger"
+                                  onClick={() => remove(index)}
+                                >
+                                  Remove Question
+                                </Button>
+                              )}
+                            </div>
+                            <hr />
                           </div>
                         );
                       })}
                   </div>
                 )}
-
               </FieldArray>
             </div>
           </Form>
@@ -536,4 +662,3 @@ const ValidationSchema = Yup.object().shape({
     </Formik>
   );
 }
-

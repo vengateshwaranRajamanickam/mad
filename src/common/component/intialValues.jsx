@@ -1,5 +1,5 @@
 export const Question = {
-  questionId: null,
+  questionId: "",
   question: "",
   questionType: null,
   radio:{

@@ -6,6 +6,7 @@ import reportWebVitals from './reportWebVitals';
 import { Provider } from "react-redux";
 import { RouterProvider } from "react-router-dom";
 import { ToastContainer} from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { PersistGate } from "redux-persist/integration/react";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { store, persistor } from "./store/store.js";
@@ -17,7 +18,7 @@ root.render(
   <Provider store={store}>
     <PersistGate loading={null} persistor={persistor}>
     <RouterProvider router={router} />
-        <ToastContainer style={{ top: "50px" }} />
+       <ToastContainer style={{ top: "50px" }} />
     </PersistGate>
   </Provider>
 
