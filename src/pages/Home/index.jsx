@@ -13,9 +13,8 @@ import {
   Choice,
   QuestionData,
 } from "../../common/component/intialValues";
-import { toast } from 'react-toastify';
 
-import { Col, FormGroup, Input, Label, Row } from "reactstrap";
+import { Col, FormGroup, Input, Label } from "reactstrap";
 import { Button } from "reactstrap";
 import { showToast } from "../../common/component/services/toaster";
 export default function Home() {
@@ -274,8 +273,8 @@ export default function Home() {
                                 />
                               </Col>
                             </FormGroup>
-                            {formik.values.question_details[`${index}`]
-                              .questionType == 1 && (
+                            {Number(formik.values.question_details[`${index}`]
+                              .questionType) === 1 && (
                               <div>
                                 <FormGroup row style={{ Gap: "5px" }}>
                                   <Label
