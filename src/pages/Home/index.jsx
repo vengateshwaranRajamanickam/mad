@@ -1,93 +1,101 @@
 import React from "react";
 import { Formik, Form, FieldArray, ErrorMessage } from "formik";
-import { object, string, array, yup } from 'yup';
+//import { object, string, array, yup } from 'yup';
+import * as Yup from 'yup';
 import "../../index.css";
 import {
   Question,
   Options,
   Choice,
-  Que
+  QuestionData
 } from "../../common/component/intialValues";
 import { Col, FormGroup, Input, Label, Row } from "reactstrap";
 import { Button } from "reactstrap";
 export default function Home() {
   const handleSubmit = (values) => {
+    console.log(values);
+    if(values?.question_details){
+
+    }
     // patchModalData(baseurl, educationEndpoints, values, setLoading, setOpen, "")
   };
 
-  const formikRef = React.useRef();
-  const ValidationSchema = object().shape({
-    question_details: array().of(
-      object().shape({
-        questionId: string().required("Question ID is Required"),
-        question: string().required("Question is Required"),
-        questionType: string().required("questionType is Required"),
-        radio: object().when('questionType', {
-          is: "2",
-          then: object().shape({
-            optionA: string().required("Option A is required"),
-            optionB: string().required("Option B is required"),
-            optionC: string().required("Option C is required"),
-            optionD: string().required("Option D is required"),
-          }),
-          otherwise: object().shape({
-            optionA: string().notRequired(),
-            optionB: string().notRequired(),
-            optionC: string().notRequired(),
-            optionD: string().notRequired(),
-          }),
-        }),
-        check: object().when('questionType', {
-          is: "1",
-          then: object().shape({
-            optionA: string().required("Option A is required"),
-            optionB: string().required("Option B is required"),
-            optionC: string().required("Option C is required"),
-            optionD: string().required("Option D is required"),
-          }),
-          otherwise: object().shape({
-            optionA: string().notRequired(),
-            optionB: string().notRequired(),
-            optionC: string().notRequired(),
-            optionD: string().notRequired(),
-          }),
-        }),
-        short: string().when('questionType', {
-          is: "3",
-          then: () => string().required("Short Answer is required"),
-          otherwise: () => string().notRequired(),
-        }),
-        solution: string().required("Solution is required"),
-        remark: string().notRequired(),
 
-      })
-    ),
-  })
 
-  // });
+  const radioSchema = Yup.object().shape({
+    Option_A: Yup.string(),
+    Option_B: Yup.string(),
+    Option_C: Yup.string(),
+    Option_D: Yup.string(),
+  });
+  
+  const checkSchema = Yup.object().shape({
+    Option_A: Yup.string(),
+    Option_B: Yup.string(),
+    Option_C: Yup.string(),
+    Option_D: Yup.string(),
+  });
+
+const ValidationSchema = Yup.object().shape({
+  question_details: Yup.array().of(
+    Yup.object().shape({
+      questionId: Yup.string().required("Question ID is Required"),
+      question: Yup.string().required("Question is Required"),
+      questionType: Yup.string().required("questionType is Required"),
+      radio: Yup.object().when(['questionType'], {
+        is: "2",
+        then: ()=> Yup.object().shape({
+          "Option A": Yup.string().required("Option A is required"),
+          "Option B": Yup.string().required("Option B is required"),
+          "Option C": Yup.string().required("Option C is required"),
+          "Option D": Yup.string().required("Option D is required"),
+        }),
+        otherwise: ()=> Yup.object().notRequired(),
+      }),
+      check: Yup.object().when('questionType', {
+        is: "1",
+        then: ()=> Yup.object().shape({
+          "Option A": Yup.string().required("Option A is required"),
+          "Option B": Yup.string().required("Option B is required"),
+          "Option C": Yup.string().required("Option C is required"),
+          "Option D": Yup.string().required("Option D is required"),
+        }),
+        otherwise: ()=> Yup.object().notRequired(),
+      }),
+      short: Yup.string().when(['questionType'], {
+        is: "3",
+        then: ()=> Yup.string().required("Short Answer is required"),
+        otherwise: ()=> Yup.string().notRequired(),
+      }),
+      solution: Yup.string().required("Solution is required"),
+      remark: Yup.string(),
+    })
+  ),
+});
+
+
+
   return (
     <Formik
       enableReinitialize
-     //validationSchema={ValidationSchema}
+     validationSchema={ValidationSchema}
       validateOnChange={true}
       validateOnBlur={true}
-      initialValues={Que}
+      initialValues={QuestionData}
       onSubmit={(values) => handleSubmit(values)}
-      innerRef={formikRef}
     >
       {(formik) => {
-        console.log("formik Values", formik.values);
-       // console.log("formik errors",formik.errors);
+      console.log("formik Values", formik.values);
+       console.log("formik errors",formik.errors);
         return (
           <Form>
             <div className=" m-3">
-              <div className="mb-2">
+              <div className="mb-4">
                 <FormGroup row style={{ rowGap: "5px" }}>
                   <Label for="Question Sheet ID" sm={10} className="label">
                     Question Sheet ID <span className="red-required"> *</span>
-                  </Label>
-                  <br></br>
-                  <Col sm={12} md={12} lg={6} xxl={6}>
+                  </Label>              
+                   <Col sm={12} md={12} lg={6} xxl={6} className="mt-2">
                     <Input
                       id={`SheetID`}
                       name={`SheetID`}
@@ -125,7 +133,6 @@ export default function Home() {
                               >
                                 {`Question ID ${index+1}`}<span className="red-required"> *</span>
                               </Label>
-                              <br></br>
                               <Input
                                 id={`question_details[${index}].questionId`}
                                 name={`question_details[${index}].questionId`}
@@ -134,6 +141,7 @@ export default function Home() {
                                 type="text"
                                 style={{ width: "300px" }}
                                 onChange={formik.handleChange}
+                                className="mt-2"
                               />
                               <ErrorMessage
                                 name={`question_details[${index}].questionId`}
@@ -150,8 +158,8 @@ export default function Home() {
                                 Question{" "}
                                 <span className="red-required"> *</span>
                               </Label>
-                              <br></br>
-                              <Col sm={12} md={12} lg={6} xxl={6}>
+                              
+                              <Col sm={12} md={12} lg={6} xxl={6} className="mt-2">
                                 <Input
                                   id={`question_details[${index}].question`}
                                   name={`question_details[${index}].question`}
@@ -167,11 +175,11 @@ export default function Home() {
                                   className="error"
                                 />
                               </Col>
-                              <Col sm={12} md={12} lg={6} xxl={6}>
+                              <Col sm={12} md={12} lg={6} xxl={6} className="mt-2">
                                 <Input
                                   id="question"
                                   name="question"
-                                  placeholder="question"
+                                  placeholder="test"
                                   style={{ width: "100%", height: "100px" }}
                                   type="textarea"
                                 />
@@ -186,16 +194,16 @@ export default function Home() {
                                 Question Type{" "}
                                 <span className="red-required"> *</span>
                               </Label>
-                              <br></br>
-                              <Col sm={12} md={12} lg={6} xxl={6}>
+                              
+                              <Col sm={12} md={12} lg={6} xxl={6} className="d-flex">
                                 {Object.keys(Options).map(
                                   (option, optionIndex) => (
-                                    <div key={optionIndex} className="d-flex gap-2">
+                                      <FormGroup radio  key={optionIndex} className="d-flex gap-2" style={{marginRight:'15px'}}>
                                       <Input
                                         id={`question_details[${index}].questionType-${optionIndex}`}
                                         name={`question_details[${index}].questionType`}
                                         defaultValue={formik.values.question_details[`${index}`].questionType}
-                                        
+                                        label={option}
                                         value={Options[option]}
                                         type="radio"
                                         onChange={formik.handleChange}
@@ -205,7 +213,7 @@ export default function Home() {
                                       >
                                         {option}
                                       </Label>
-                                    </div>
+                                      </FormGroup>
                                   )
                                 )}
                                 <ErrorMessage
@@ -229,7 +237,7 @@ export default function Home() {
                                       Choices{" "}
                                       <span className="red-required"> *</span>
                                     </Label>
-                                    <br></br>
+                                    
                                     {Choice?.length > 0 &&
                                       Choice.map((data, choiceIndex) => (
                                         <Col
@@ -238,9 +246,10 @@ export default function Home() {
                                           lg={12}
                                           xxl={12}
                                           key={choiceIndex}
-                                          className="m-2 "
+                                          className="mt-3"
                                         >
-                                          <div className="d-flex gap-2">                                        <Label
+                                          <div className="d-flex gap-2 mt-2">                                        
+                                          <Label
                                             for={`question_details[${index}].check-${choiceIndex}`}
                                             className="label"
                                           >
@@ -260,9 +269,7 @@ export default function Home() {
                                             onChange={formik.handleChange}
                                           />
                                           </div>
-  
-                                          <br></br>
-                                          <Row>
+                                          <Row style={{gap:'5px'}} className="mt-2">
                                             <Col sm={12} md={12} lg={6} xxl={6}>
                                               <Input
                                                 id={`question_details[${index}].check.${data}`}
@@ -316,7 +323,6 @@ export default function Home() {
                                       Choices{" "}
                                       <span className="red-required"> *</span>
                                     </Label>
-                                    <br></br>
                                     {Choice?.length > 0 &&
                                       Choice.map((data, choiceIndex) => (
                                         <Col
@@ -325,10 +331,11 @@ export default function Home() {
                                           lg={12}
                                           xxl={12}
                                           key={choiceIndex}
+                                          className="mt-3"
                                         >
+                                          <div className="d-flex gap-2 mt-2">  
                                           <Label
                                             for={`question_details[${index}].radio-${choiceIndex}`}
-                                            sm={10}
                                             className="label"
                                           >
                                             {data}{" "}
@@ -345,8 +352,8 @@ export default function Home() {
                                             type="radio"
                                             onChange={formik.handleChange}
                                           />
-                                          <br></br>
-                                          <Row>
+                                          </div>
+                                          <Row style={{gap:'5px'}} className="mt-2">
                                             <Col sm={12} md={12} lg={6} xxl={6}>
                                               <Input
                                                 id={`question_details[${index}].radio.${data}`}
@@ -400,8 +407,7 @@ export default function Home() {
                                       Short Answer{" "}
                                       <span className="red-required"> *</span>
                                     </Label>
-                                    <br></br>
-                                    <Col sm={12} md={12} lg={6} xxl={6}>
+                                    <Col sm={12} md={12} lg={6} xxl={6} className="mt-2">
                                       <Input
                                         id={`question_details[${index}].short`}
                                         name={`question_details[${index}].short`}
@@ -421,7 +427,7 @@ export default function Home() {
                                         className="error"
                                       />
                                     </Col>
-                                    <Col sm={12} md={12} lg={6} xxl={6}>
+                                    <Col sm={12} md={12} lg={6} xxl={6} className="mt-2">
                                       <Input
                                         id={`question_details[${index}].question`}
                                         name={`question_details[${index}].question`}
@@ -447,8 +453,7 @@ export default function Home() {
                                 Solution{" "}
                                 <span className="red-required"> *</span>
                               </Label>
-                              <br></br>
-                              <Col sm={12} md={12} lg={6} xxl={6}>
+                              <Col sm={12} md={12} lg={6} xxl={6} className="mt-2">
                                 <Input
                                   id={`question_details[${index}].solution`}
                                   name={`question_details[${index}].solution`}
@@ -464,7 +469,7 @@ export default function Home() {
                                   className="error"
                                 />
                               </Col>
-                              <Col sm={12} md={12} lg={6} xxl={6}>
+                              <Col sm={12} md={12} lg={6} xxl={6} className="mt-2">
                                 <Input
                                   id="question"
                                   name="question"
@@ -476,7 +481,7 @@ export default function Home() {
                             </FormGroup>
                             <div className="d-flex justify-content-center gap-2">
 
-                              <Button color="primary" onClick={() => { }}>
+                              <Button color="primary" onClick={() => formik.handleSubmit()}>
                                 Save
                               </Button>
                               <Button color="primary" onClick={() => { }}>
@@ -495,7 +500,6 @@ export default function Home() {
                               >
                                 Remark{" "}
                               </Label>
-                              <br></br>
                               <Col sm={12} md={12} lg={6} xxl={6}>
                                 <Input
                                   id={`question_details[${index}].remark`}
@@ -517,6 +521,7 @@ export default function Home() {
                             <Button color="success"  onClick={()=>push(Question)}>Add Question</Button>
                 {index >= 1 && <Button color="danger"  onClick={()=>remove(index)}>Remove Question</Button>}
                 </div>
+                <hr/>
                           </div>
                         );
                       })}
@@ -532,204 +537,3 @@ export default function Home() {
   );
 }
 
-
-// import React from 'react';
-// import { Formik, Form, Field, ErrorMessage } from 'formik';
-// import { useFieldArray } from 'react-hook-form'; // Assuming useFieldArray is from react-hook-form
-// import * as Yup from 'yup'; // Assuming Yup is used for validation
-
-// // Assuming Question and Choice are defined elsewhere
-// const Question = {}; // Replace with your Question schema
-// const Choice = []; // Replace with your Choice array
-
-// const ValidationSchema = Yup.object().shape({
-//   // Add validation rules for your form fields here
-//   SheetID: Yup.string().required('Question Sheet ID is required'),
-//   question_details: Yup.array().of(
-//     Yup.object().shape({
-//       questionId: Yup.string().required('Question ID is required'),
-//       question: Yup.string().required('Question is required'),
-//       questionType: Yup.string().required('Question Type is required'),
-//       // Add validation rules for other nested fields as needed
-//     })
-//   ),
-// });
-
-// const MyForm = () => {
-//   const formikRef = React.createRef();
-
-//   const handleSubmit = (values) => {
-//     console.log('Form values:', values);
-//     // Handle form submission logic here
-//   };
-
-//   const { push, remove } = useFieldArray(formik.form.question_details);
-
-//   return (
-//     <Formik
-//       enableReinitialize
-//       validationSchema={ValidationSchema}
-//       validateOnChange={true}
-//       validateOnBlur={true}
-//       initialValues={{ question_details: [Question] }} // Assuming Question is an empty array or object
-//       onSubmit={handleSubmit}
-//       innerRef={formikRef}
-//     >
-//       {(formik) => {
-//         console.log("formik Values", formik.values);
-//         console.log("formik errors", formik.errors);
-
-//         return (
-//           <Form>
-//             <div className="m-3">
-//               <div className="mb-2">
-//                 <FormGroup row style={{ rowGap: "5px" }}>
-//                   <Label for="Question Sheet ID" sm={10} className="label">
-//                     Question Sheet ID <span className="red-required"> *</span>
-//                   </Label>
-//                   <br />
-//                   <Col sm={12} md={12} lg={6} xxl={6}>
-//                     <Field
-//                       id={`SheetID`}
-//                       name={`SheetID`}
-//                       placeholder="Question Sheet ID"
-//                       type="text"
-//                       style={{ width: "500px" }}
-//                     />
-//                     <ErrorMessage
-//                       name={`SheetID`}
-//                       component="div"
-//                       className="error"
-//                     />
-//                   </Col>
-//                   <Col sm={12} md={12} lg={6} xxl={6}>
-//                     <Button color="primary" onClick={() => { }}>
-//                       Upload to GoogleSheet
-//                     </Button>
-//                   </Col>
-//                 </FormGroup>
-//               </div>
-//               <hr />
-
-//               {formik.values.question_details?.map((data, index) => (
-//                 <div key={index}>
-//                   <FormGroup>
-//                     <Label
-//                       for={`question_details[${index}].questionId`}
-//                       sm={10}
-//                       className="label"
-//                     >
-//                       Question ID <span className="red-required"> *</span>
-//                     </Label>
-//                     <br />
-//                     <Field
-//                       id={`question_details[${index}].questionId`}
-//                       name={`question_details[${index}].questionId`}
-//                       placeholder="Question ID"
-//                       type="text"
-//                       style={{ width: "300px" }}
-//                     />
-//                     <ErrorMessage
-//                       name={`question_details[${index}].questionId`}
-//                       component="div"
-//                       className="error"
-//                     />
-//                   </FormGroup>
-//                   <FormGroup row style={{ Gap: "5px" }}>
-//                     <Label
-//                       for={`question_details[${index}].question`}
-//                       sm={10}
-//                       className="label"
-//                     >
-//                       Question <span className="red-required"> *</span>
-//                     </Label>
-//                     <br />
-//                     <Col sm={12} md={12} lg={6} xxl={6}>
-//                       <Field
-//                         id={`question_details[${index}].question`}
-//                         name={`question_details[${index}].question`}
-//                         placeholder="Question"
-
-
-
-// import React from 'react';
-// import { Formik, Form, FieldArray, Field, ErrorMessage } from 'formik';
-// import * as Yup from 'yup';
-
-// const ValidationSchema = Yup.object().shape({
-//   // Define your validation schema here
-// });
-
-// const initialValues = {
-//   question_details: [{ questionId: '', question: '', questionType: '' }],
-//   SheetID: ''
-// };
-
-// const Options = {
-//   // Define your options here
-// };
-
-// const Choice = ['Choice1', 'Choice2', 'Choice3'];
-
-// const YourComponent = () => {
-//   const handleSubmit = (values) => {
-//     // Handle form submission
-//   };
-
-//   return (
-//     <Formik
-//       enableReinitialize
-//       validationSchema={ValidationSchema}
-//       validateOnChange={true}
-//       validateOnBlur={true}
-//       initialValues={initialValues}
-//       onSubmit={(values) => handleSubmit(values)}
-//     >
-//       {(formik) => (
-//         <Form>
-//           <div className="m-3">
-//             <FieldArray name="question_details">
-//               {({ push, remove }) => (
-//                 <div>
-//                   {formik.values.question_details.map((data, index) => (
-//                     <div key={index}>
-//                       <Field name={`question_details[${index}].questionId`} />
-//                       <ErrorMessage name={`question_details[${index}].questionId`} component="div" className="error" />
-
-//                       <Field name={`question_details[${index}].question`} />
-//                       <ErrorMessage name={`question_details[${index}].question`} component="div" className="error" />
-
-//                       <Field name={`question_details[${index}].questionType`} as="select">
-//                         {Object.keys(Options).map((option, optionIndex) => (
-//                           <option key={optionIndex} value={Options[option]}>
-//                             {option}
-//                           </option>
-//                         ))}
-//                       </Field>
-//                       <ErrorMessage name={`question_details[${index}].questionType`} component="div" className="error" />
-//                     </div>
-//                   ))}
-//                 </div>
-//               )}
-//             </FieldArray>
-
-//             {/* Additional form fields outside FieldArray */}
-//             <div>
-//               <label htmlFor="SheetID">Question Sheet ID</label>
-//               <Field id="SheetID" name="SheetID" placeholder="Question Sheet ID" type="text" />
-//               <ErrorMessage name="SheetID" component="div" className="error" />
-//             </div>
-
-//             {/* Buttons */}
-//             <div className="d-flex justify-content-center gap-2">
-//               <button type="submit">Submit</button>
-//               <button type="reset">Reset</button>
-//             </div>
-//           </div>
-//         </Form>
-//       )}
-//     </Formik>
-//   );
-// };
-
-// export default YourComponent;

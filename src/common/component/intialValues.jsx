@@ -3,16 +3,16 @@ export const Question = {
   question: "",
   questionType: null,
   radio:{
-     "Option A": "",
-     "Option B": "",
-     "Option C": "",
-     "Option D": "",
+    "Option A": "",
+    "Option B": "",
+    "Option C": "",
+    "Option D": "",
   },
   check:{
-     "Option A": "",
-     "Option B": "",
-     "Option C": "",
-     "Option D": "",
+    "Option A": "",
+    "Option B": "",
+    "Option C": "",
+    "Option D": "",
   },
   check_answer: {
     "Option A": false,
@@ -27,12 +27,10 @@ export const Question = {
   remark:"",
 };
 
-export const Que = {
+export const QuestionData = {
   question_details: [Question],
   SheetID: null
 }
-
-
 
 export const Options = {
 MCQ: 1,
