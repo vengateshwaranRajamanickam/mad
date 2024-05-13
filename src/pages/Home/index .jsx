@@ -1,22 +1,13 @@
 import React from "react";
-import {
-  Formik,
-  Form,
-  FieldArray,
-  ErrorMessage,
-} from "formik";
+import { Formik, Form, FieldArray, ErrorMessage, } from "formik";
 import * as Yup from "yup";
 import "../../index.css";
-import {
-  Question,
-  Options,
-  Choice,
-  QuestionData,
-} from "../../common/component/intialValues";
-
+import { Question, Options, Choice, QuestionData, } from "../../common/component/intialValues";
 import { Col, FormGroup, Input, Label } from "reactstrap";
 import { Button } from "reactstrap";
 import { showToast } from "../../common/component/services/toaster";
+import { MathJax, MathJaxContext } from "better-react-mathjax";
+
 export default function Home() {
   const formikRef = React.useRef();
   const handleSubmit = (values) => {
@@ -63,6 +54,17 @@ export default function Home() {
             }),
           otherwise: () => Yup.object().notRequired(),
         }),
+        // mathJaxCheck: Yup.object().when("questionType", {
+        //   is: "1",
+        //   then: () =>
+        //     Yup.object().shape({
+        //       "Option A": Yup.string().required("Option A is required"),
+        //       "Option B": Yup.string().required("Option B is required"),
+        //       "Option C": Yup.string().required("Option C is required"),
+        //       "Option D": Yup.string().required("Option D is required"),
+        //     }),
+        //   otherwise: () => Yup.object().notRequired(),
+        // }),
         check_answer: Yup.object().when("questionType", {
           is: "1", 
           then: ()=> Yup.object().test(
@@ -82,8 +84,8 @@ export default function Home() {
       })
     ),
     SheetID:  Yup.string().required("QuestionSheet ID is Required"),
-  });
-
+  });  
+  
   return (
     <Formik
       enableReinitialize
@@ -99,7 +101,7 @@ export default function Home() {
         console.log("formik errors", formik.errors);
         return (
           <Form>
-            <div className=" m-3">
+            <div className="m-3">
               <div className="mb-4">
                 <FormGroup row style={{ rowGap: "5px" }}>
                   <Label for="Question Sheet ID" sm={10} className="label">
@@ -134,10 +136,7 @@ export default function Home() {
                     {formik.values.question_details?.length > 0 &&
                       formik.values.question_details?.map((data, index) => {
                         function reset(index) {
-                          formik.setFieldValue(
-                            `question_details[${index}]`,
-                            Question
-                          );
+                          formik.setFieldValue( `question_details[${index}]`, Question );
                         }
                         return (
                           <div key={index}>
@@ -153,10 +152,7 @@ export default function Home() {
                               <Input
                                 id={`question_details[${index}].questionId`}
                                 name={`question_details[${index}].questionId`}
-                                value={
-                                  formik.values.question_details[`${index}`]
-                                    .questionId
-                                }
+                                value={ formik.values.question_details[`${index}`] .questionId }
                                 placeholder="Question ID"
                                 type="text"
                                 style={{ width: "300px" }}
@@ -189,10 +185,7 @@ export default function Home() {
                                 <Input
                                   id={`question_details[${index}].question`}
                                   name={`question_details[${index}].question`}
-                                  value={
-                                    formik.values.question_details[`${index}`]
-                                      .question
-                                  }
+                                  value={ formik.values.question_details[`${index}`] .question }
                                   placeholder="Question"
                                   type="textarea"
                                   style={{ width: "100%", height: "100px" }}
@@ -248,11 +241,7 @@ export default function Home() {
                                       <Input
                                         id={`question_details[${index}].questionType-${optionIndex}`}
                                         name={`question_details[${index}].questionType`}
-                                        defaultValue={
-                                          formik.values.question_details[
-                                            `${index}`
-                                          ].questionType
-                                        }
+                                        defaultValue={ formik.values.question_details[ `${index}` ].questionType }
                                         label={option}
                                         value={Options[option]}
                                         type="radio"
@@ -310,12 +299,7 @@ export default function Home() {
                                           <Input
                                             id={`question_details[${index}].check_answer.${data}`}
                                             name={`question_details[${index}].check_answer.${data}`}
-                                            //defaultValue={formik.values.question_details[`${index}`].questionType}
-                                            checked={
-                                              formik.values.question_details[
-                                                `${index}`
-                                              ].check_answer[`${data}`]
-                                            }
+                                            checked={ formik.values.question_details[ `${index}` ].check_answer[`${data}`] }
                                             value={data}
                                             type="checkbox"
                                             onChange={formik.handleChange}
@@ -331,33 +315,35 @@ export default function Home() {
                                         >
                                           <Col sm={12} md={12} lg={6} xxl={6}>
                                             <Input
-                                              id={`question_details[${index}].check.${data}`}
-                                              name={`question_details[${index}].check.${data}`}
-                                              value={
-                                                formik.values.question_details[
-                                                  `${index}`
-                                                ].check[`${data}`]
-                                              }
+                                              id={`question_details[${index}].check[${data}]`}
+                                              name={`question_details[${index}].check[${data}]`}
+                                              value={formik.values.question_details[ `${index}` ].check[`${data}`]}
                                               placeholder={data}
                                               type="textarea"
                                               style={{
                                                 width: "100%",
                                                 height: "50px",
                                               }}
-                                              onChange={formik.handleChange}
+                                              onChange={(e)=>
+                                                {
+                                                  formik.handleChange(e)
+                                                  formik.setFieldValue(`question_details[${index}].mathJaxCheck[${data}]`,e.target.value);
+
+                                                }}
                                             />
 
                                             <ErrorMessage
-                                              name={`question_details[${index}].check.${data}`}
+                                              name={`question_details[${index}].check[${data}]`}
                                               component="div"
                                               className="error"
                                             />
                                           </Col>
                                           <Col sm={12} md={12} lg={6} xxl={6}>
                                             <Input
-                                              id={`question_details[${index}].question`}
-                                              name={`question_details[${index}].question`}
-                                              placeholder="test"
+                                              id={`question_details[${index}].mathJaxCheck[${data}]`}
+                                              name={`question_details[${index}].mathJaxCheck[${data}]`}
+                                              value={<MathJax>{`DFDf`}</MathJax>}
+                                              placeholder={`converted ${data}`}
                                               type="textarea"
                                               style={{
                                                 width: "100%",
@@ -366,6 +352,11 @@ export default function Home() {
                                               onChange={formik.handleChange}
                                             />
                                           </Col>
+                                          <ErrorMessage
+                                              name={`question_details[${index}].mathJaxCheck.${data}`}
+                                              component="div"
+                                              className="error"
+                                            />
                                         </div>
                                       </Col>
                                     ))}
@@ -410,11 +401,7 @@ export default function Home() {
                                           <Input
                                             id={`question_details[${index}].radio_answer-${choiceIndex}`}
                                             name={`question_details[${index}].radio_answer`}
-                                            defaultValue={
-                                              formik.values.question_details[
-                                                `${index}`
-                                              ].radio_answer
-                                            }
+                                            defaultValue={ formik.values.question_details[ `${index}` ].radio_answer }
                                             value={data}
                                             type="radio"
                                             onChange={formik.handleChange}
@@ -430,12 +417,8 @@ export default function Home() {
                                             <Input
                                               id={`question_details[${index}].radio.${data}`}
                                               name={`question_details[${index}].radio.${data}`}
-                                              value={
-                                                formik.values.question_details[
-                                                  `${index}`
-                                                ].radio[`${data}`]
-                                              }
-                                              placeholder={`${data}`}
+                                              value={ formik.values.question_details[ `${index}` ].radio[`${data}`] }
+                                              placeholder={data}
                                               type="textarea"
                                               style={{
                                                 width: "100%",
@@ -452,9 +435,9 @@ export default function Home() {
                                           </Col>
                                           <Col sm={12} md={12} lg={6} xxl={6}>
                                             <Input
-                                              id={`question_details[${index}].question`}
-                                              name={`question_details[${index}].question`}
-                                              placeholder="test"
+                                              id={`question_details[${index}].mathJaxRadio[${data}]`}
+                                              name={`question_details[${index}].mathJaxRadio[${data}]`}
+                                              placeholder={`converted ${data}`}
                                               type="textarea"
                                               style={{
                                                 width: "100%",
@@ -493,11 +476,7 @@ export default function Home() {
                                     <Input
                                       id={`question_details[${index}].short`}
                                       name={`question_details[${index}].short`}
-                                      value={
-                                        formik.values.question_details[
-                                          `${index}`
-                                        ].short
-                                      }
+                                      value={ formik.values.question_details[ `${index}` ].short }
                                       placeholder="Short Answer"
                                       type="textarea"
                                       style={{
@@ -555,10 +534,7 @@ export default function Home() {
                                 <Input
                                   id={`question_details[${index}].solution`}
                                   name={`question_details[${index}].solution`}
-                                  value={
-                                    formik.values.question_details[`${index}`]
-                                      .solution
-                                  }
+                                  value={ formik.values.question_details[`${index}`] .solution }
                                   placeholder="Solution"
                                   type="textarea"
                                   style={{ width: "100%", height: "100px" }}
@@ -615,10 +591,7 @@ export default function Home() {
                                 <Input
                                   id={`question_details[${index}].remark`}
                                   name={`question_details[${index}].remark`}
-                                  value={
-                                    formik.values.question_details[`${index}`]
-                                      .remark
-                                  }
+                                  value={ formik.values.question_details[`${index}`] .remark }
                                   placeholder="Remark"
                                   type="textarea"
                                   style={{ width: "100%", height: "100px" }}
