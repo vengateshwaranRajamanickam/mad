@@ -4,9 +4,18 @@ import Page404 from "../pages/Error/Page404";
 import Home from "../pages/Home/index ";
 import { MathJaxContext } from "better-react-mathjax";
 
+
 const config = {
-  loader: { load: ["input/asciimath"] }
+  loader: { load: ["input/asciimath"] },
+  asciimath: {
+    displaystyle: true,
+    delimiters: [
+      ["$", "$"],
+      ["`", "`"]
+    ]
+  }
 };
+
 
 export const router = createBrowserRouter([
   {
@@ -16,9 +25,9 @@ export const router = createBrowserRouter([
       {
       path: "/",
       element:  
-      <MathJaxContext config={config}>    
+      <MathJaxContext version={3} config={config}>    
          <Home />
-         </MathJaxContext>,
+      </MathJaxContext>,
       index: true
       },
       { path: "*", element: <Page404 /> },

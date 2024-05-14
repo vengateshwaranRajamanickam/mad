@@ -14,18 +14,18 @@ export const Question = {
     "Option C": "",
     "Option D": "",
   },
-  mathJaxCheck: {
-    "Option A": "",
-    "Option B": "",
-    "Option C": "",
-    "Option D": "",
-  },
-  mathJaxRadio:  {
-    "Option A": "",
-    "Option B": "",
-    "Option C": "",
-    "Option D": "",
-  },
+  // mathJaxCheck: {
+  //   "Option A": "",
+  //   "Option B": "",
+  //   "Option C": "",
+  //   "Option D": "",
+  // },
+  // mathJaxRadio:  {
+  //   "Option A": "",
+  //   "Option B": "",
+  //   "Option C": "",
+  //   "Option D": "",
+  // },
   check_answer: {
     "Option A": false,
     "Option B": false,
