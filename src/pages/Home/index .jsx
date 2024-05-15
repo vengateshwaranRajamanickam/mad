@@ -282,7 +282,7 @@ export default function Home() {
                                                 width: "100%",
                                                 height: "50px",
                                               }}
-                                              onChange={()=>formik.handleChange}
+                                              onChange={formik.handleChange}
                                             />
 
                                             <ErrorMessage
@@ -292,7 +292,7 @@ export default function Home() {
                                             />
                                           </Col>
                                           <Col sm={12} md={12} lg={6} xxl={6} className="d-flex justify-content-center border-black">
-                                            <MathJax>{formik.values.question_details[index].check[data]}</MathJax>
+                                          <MathJax>{formik.values.question_details[index].check[data]}</MathJax>
                                           </Col>
                                         </div>
                                       </Col>

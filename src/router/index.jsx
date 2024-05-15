@@ -6,14 +6,52 @@ import { MathJaxContext } from "better-react-mathjax";
 
 
 const config = {
-  loader: { load: ["input/asciimath"] },
-  asciimath: {
-    displaystyle: true,
-    delimiters: [
+ 
+
+  // loader: { load: ["input/asciimath"] },
+  // asciimath: {
+  //   displaystyle: true,
+  //   delimiters: [
+  //     ["$", "$"],
+  //     ["`", "`"],
+  //   ]
+  // } 
+  //working
+
+  // loader: { load: ["[tex]/html","input/asciimath"] },
+  // tex: {
+  //   packages: { "[+]": ["html"] },
+  //   inlineMath: [
+  //     ["$", "$"],
+  //     ["\\(", "\\)"]
+  //   ],
+  //   displayMath: [
+  //     ["$$", "$$"],
+  //     ["\\[", "\\]"]
+  //   ],
+  // },
+  // asciimath: {
+  //   displaystyle: true,
+  //   delimiters: [
+  //     ["$", "$"],
+  //     ["`", "`"]
+  //   ]
+  // } 
+  // combine
+
+  loader: { load: ["[tex]/html"] },
+  tex: {
+    packages: { "[+]": ["html"] },
+    inlineMath: [
       ["$", "$"],
-      ["`", "`"]
+      ["\\(", "\\)"]
+    ],
+    displayMath: [
+      ["$$", "$$"],
+      ["\\[", "\\]"]
     ]
   }
+
 };
 
 
@@ -25,7 +63,7 @@ export const router = createBrowserRouter([
       {
       path: "/",
       element:  
-      <MathJaxContext version={3} config={config}>    
+      <MathJaxContext  version={3} config={config}>    
          <Home />
       </MathJaxContext>,
       index: true
