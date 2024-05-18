@@ -7,9 +7,10 @@ import { Col, FormGroup, Input, Label } from "reactstrap";
 import { Button } from "reactstrap";
 import { showToast } from "../../common/component/services/toaster";
 import { MathJax } from "better-react-mathjax";
-
+import ImageConvertor from './ImageConvertor';
 
 export default function Home() {
+  const pattern = /\\img\s*\[([^\]]*)\]\{([^}]*)\}/;
 
   /* Schema Validation*/
   const ValidationSchema = Yup.object().shape({
@@ -20,7 +21,7 @@ export default function Home() {
         questionType: Yup.string().required("QuestionType is Required"),
         radio: Yup.object().when(["questionType"], {
           is: "2",
-          then: () => 
+          then: () =>
             Yup.object().shape({
               "Option A": Yup.string().required("Option A is required"),
               "Option B": Yup.string().required("Option B is required"),
@@ -176,7 +177,7 @@ export default function Home() {
                               </Col>
                               <Col sm={12} md={12} lg={6} xxl={6} className="d-flex justify-content-center border-black">
                                 <MathJax >{formik.values.question_details[index].question}</MathJax>
-                                
+
                               </Col>
                             </FormGroup>
                             <FormGroup row style={{ Gap: "5px" }}>
@@ -293,8 +294,12 @@ export default function Home() {
                                               />
                                             </Col>
                                             <Col sm={12} md={12} lg={6} xxl={6} className="d-flex justify-content-center border-black">
-
-                                              <MathJax>{formik.values.question_details[index].check[data]}</MathJax>
+                                              {
+                                                formik.values.question_details[index].check[data] && (
+                                                  <ImageConvertor data={formik.values.question_details[index].check[data]} />
+                                                )
+                                              }
+                                              <MathJax>{formik.values.question_details[index].check[data].replace(pattern, '')}</MathJax>
 
                                             </Col>
                                           </div>

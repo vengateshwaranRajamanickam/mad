@@ -4,57 +4,18 @@ import Page404 from "../pages/Error/Page404";
 import Home from "../pages/Home/index ";
 import { MathJaxContext } from "better-react-mathjax";
 
-
-const config = {
+  /*MathJax*/
+  const config = {
+    loader: { load: ["input/asciimath"] },
+    asciimath: {
+      displaystyle: true,
+      delimiters: [
+        ["$", "$"],
+        ["`", "`"]
+      ]
+    }
+  };
  
-
-  // loader: { load: ["input/asciimath"] },
-  // asciimath: {
-  //   displaystyle: true,
-  //   delimiters: [
-  //     ["$", "$"],
-  //     ["`", "`"],
-  //   ]
-  // } 
-  //working
-
-  // loader: { load: ["[tex]/html","input/asciimath"] },
-  // tex: {
-  //   packages: { "[+]": ["html"] },
-  //   inlineMath: [
-  //     ["$", "$"],
-  //     ["\\(", "\\)"]
-  //   ],
-  //   displayMath: [
-  //     ["$$", "$$"],
-  //     ["\\[", "\\]"]
-  //   ],
-  // },
-  // asciimath: {
-  //   displaystyle: true,
-  //   delimiters: [
-  //     ["$", "$"],
-  //     ["`", "`"]
-  //   ]
-  // } 
-  // combine
-
-  loader: { load: ["[tex]/html"] },
-  tex: {
-    packages: { "[+]": ["html"] },
-    inlineMath: [
-      ["$", "$"],
-      ["\\(", "\\)"]
-    ],
-    displayMath: [
-      ["$$", "$$"],
-      ["\\[", "\\]"]
-    ]
-  }
-
-};
-
-
 export const router = createBrowserRouter([
   {
     path: "/",
@@ -63,8 +24,8 @@ export const router = createBrowserRouter([
       {
       path: "/",
       element:  
-      <MathJaxContext  version={3} config={config}>    
-         <Home />
+      <MathJaxContext config={config}>
+      <Home />
       </MathJaxContext>,
       index: true
       },
