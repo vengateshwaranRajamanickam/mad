@@ -166,7 +166,7 @@ export default function Home() {
                                   value={formik.values.question_details[index].question}
                                   placeholder="Question"
                                   type="textarea"
-                                  style={{ width: "100%", height: "100px" }}
+                                  style={{ width: "100%", height: "100px", overflowY: 'scroll'}}
                                   onChange={formik.handleChange}
                                 />
                                 <ErrorMessage
@@ -176,8 +176,12 @@ export default function Home() {
                                 />
                               </Col>
                               <Col sm={12} md={12} lg={6} xxl={6} className="d-flex justify-content-center border-black">
-                                <MathJax >{formik.values.question_details[index].question}</MathJax>
-
+                                {
+                                  pattern.test(formik.values.question_details[index].question) && (
+                                    <ImageConvertor data={formik.values.question_details[index].question} />
+                                  )
+                                }
+                                <MathJax>{formik.values.question_details[index].question.replace(pattern, '')}</MathJax>
                               </Col>
                             </FormGroup>
                             <FormGroup row style={{ Gap: "5px" }}>
@@ -282,7 +286,8 @@ export default function Home() {
                                                 type="textarea"
                                                 style={{
                                                   width: "100%",
-                                                  height: "50px",
+                                                  height: "75px",
+                                                  overflowY: 'scroll',
                                                 }}
                                                 onChange={formik.handleChange}
                                               />
@@ -293,14 +298,13 @@ export default function Home() {
                                                 className="error"
                                               />
                                             </Col>
-                                            <Col sm={12} md={12} lg={6} xxl={6} className="d-flex justify-content-center border-black">
+                                            <Col sm={12} md={12} lg={6} xxl={6} className="d-flex justify-content-center border-black" >                                         
+                                              <MathJax>{formik.values.question_details[index].check[data].replace(pattern, '')}</MathJax>
                                               {
-                                                formik.values.question_details[index].check[data] && (
+                                                pattern.test(formik.values.question_details[index].check[data]) && (
                                                   <ImageConvertor data={formik.values.question_details[index].check[data]} />
                                                 )
                                               }
-                                              <MathJax>{formik.values.question_details[index].check[data].replace(pattern, '')}</MathJax>
-
                                             </Col>
                                           </div>
                                         </Col>
@@ -367,7 +371,8 @@ export default function Home() {
                                                 type="textarea"
                                                 style={{
                                                   width: "100%",
-                                                  height: "50px",
+                                                  height: "75px",
+                                                  overflowY: 'scroll',
                                                 }}
                                                 onChange={formik.handleChange}
                                               />
@@ -379,7 +384,12 @@ export default function Home() {
                                               />
                                             </Col>
                                             <Col sm={12} md={12} lg={6} xxl={6} className="d-flex justify-content-center border-black">
-                                              <MathJax>{formik.values.question_details[index].radio[data]}</MathJax>
+                                            <MathJax>{formik.values.question_details[index].radio[data].replace(pattern, '')}</MathJax>
+                                            {
+                                                pattern.test(formik.values.question_details[index].radio[data]) && (
+                                                  <ImageConvertor data={formik.values.question_details[index].radio[data]} />
+                                                )
+                                              }
                                             </Col>
                                           </div>
                                         </Col>
@@ -416,7 +426,8 @@ export default function Home() {
                                         type="textarea"
                                         style={{
                                           width: "100%",
-                                          height: "50px",
+                                          height: "75px",
+                                          overflowY: 'scroll',
                                         }}
                                         onChange={formik.handleChange}
                                       />
@@ -434,7 +445,12 @@ export default function Home() {
                                       xxl={6}
                                       className="mt-2 d-flex justify-content-center border-black"
                                     >
-                                      <MathJax>{formik.values.question_details[index].short}</MathJax>
+                                      <MathJax>{formik.values.question_details[index].short.replace(pattern, '')}</MathJax>
+                                      {
+                                                pattern.test(formik.values.question_details[index].short) && (
+                                                  <ImageConvertor data={formik.values.question_details[index].short} />
+                                                )
+                                              }
                                     </Col>
                                   </FormGroup>
                                 </div>
@@ -462,7 +478,7 @@ export default function Home() {
                                   value={formik.values.question_details[index].solution}
                                   placeholder="Solution"
                                   type="textarea"
-                                  style={{ width: "100%", height: "100px" }}
+                                  style={{ width: "100%", height: "100px",overflowY: 'scroll',}}
                                   onChange={formik.handleChange}
                                 />
                                 <ErrorMessage
@@ -478,7 +494,12 @@ export default function Home() {
                                 xxl={6}
                                 className="mt-2 d-flex justify-content-center border-black"
                               >
-                                <MathJax>{formik.values.question_details[index].solution}</MathJax>
+                                 <MathJax>{formik.values.question_details[index].solution.replace(pattern, '')}</MathJax>
+                                      {
+                                                pattern.test(formik.values.question_details[index].solution) && (
+                                                  <ImageConvertor data={formik.values.question_details[index].solution} />
+                                                )
+                                              }
                               </Col>
                             </FormGroup>
                             <div className="d-flex justify-content-center gap-2">
