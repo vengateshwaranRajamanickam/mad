@@ -181,7 +181,7 @@ export default function Home() {
                                     <ImageConvertor data={formik.values.question_details[index].question} />
                                   )
                                 }
-                                <MathJax>{formik.values.question_details[index].question.replace(pattern, '')}</MathJax>
+                                <MathJax style={{ overflow: 'auto' }}>{formik.values.question_details[index].question.replace(pattern, '')}</MathJax>
                               </Col>
                             </FormGroup>
                             <FormGroup row style={{ Gap: "5px" }}>
@@ -299,7 +299,7 @@ export default function Home() {
                                               />
                                             </Col>
                                             <Col sm={12} md={12} lg={6} xxl={6} className="d-flex justify-content-center border-black" >                                         
-                                              <MathJax>{formik.values.question_details[index].check[data].replace(pattern, '')}</MathJax>
+                                              <MathJax style={{ overflow: 'auto' }}>{formik.values.question_details[index].check[data].replace(pattern, '')}</MathJax>
                                               {
                                                 pattern.test(formik.values.question_details[index].check[data]) && (
                                                   <ImageConvertor data={formik.values.question_details[index].check[data]} />
@@ -384,7 +384,7 @@ export default function Home() {
                                               />
                                             </Col>
                                             <Col sm={12} md={12} lg={6} xxl={6} className="d-flex justify-content-center border-black">
-                                            <MathJax>{formik.values.question_details[index].radio[data].replace(pattern, '')}</MathJax>
+                                            <MathJax style={{ overflow: 'auto' }}>{formik.values.question_details[index].radio[data].replace(pattern, '')}</MathJax>
                                             {
                                                 pattern.test(formik.values.question_details[index].radio[data]) && (
                                                   <ImageConvertor data={formik.values.question_details[index].radio[data]} />
@@ -445,7 +445,7 @@ export default function Home() {
                                       xxl={6}
                                       className="mt-2 d-flex justify-content-center border-black"
                                     >
-                                      <MathJax>{formik.values.question_details[index].short.replace(pattern, '')}</MathJax>
+                                      <MathJax style={{ overflow: 'auto' }}>{formik.values.question_details[index].short.replace(pattern, '')}</MathJax>
                                       {
                                                 pattern.test(formik.values.question_details[index].short) && (
                                                   <ImageConvertor data={formik.values.question_details[index].short} />
@@ -494,7 +494,7 @@ export default function Home() {
                                 xxl={6}
                                 className="mt-2 d-flex justify-content-center border-black"
                               >
-                                 <MathJax>{formik.values.question_details[index].solution.replace(pattern, '')}</MathJax>
+                                 <MathJax style={{ overflow: 'auto' }}>{formik.values.question_details[index].solution.replace(pattern, '')}</MathJax>
                                       {
                                                 pattern.test(formik.values.question_details[index].solution) && (
                                                   <ImageConvertor data={formik.values.question_details[index].solution} />
